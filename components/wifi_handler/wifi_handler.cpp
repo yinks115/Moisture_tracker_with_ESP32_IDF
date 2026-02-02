@@ -215,7 +215,22 @@ esp_err_t stop_wifi_connection() {
     return ret_val;
 }
 
-//implementation of event handlers
+esp_err_t post_moisture_reading(const int reading) {
+
+    // convert reading to json
+
+    /*
+    Procedure:
+    1. make a http client config (already did in start_wifi func)
+    2. initialize an http client object using the http client config. returns a ptr
+    3. set the http header, method, and the post field
+    4. perform the Post request
+    5. free the http client
+    */
+}
+
+//**************implementation of event handlers
+
 //board will be listening to events through wifi so we use Wifi_event_sta (sta stands for station)
 void wifi_event_handler(
     void* arg,

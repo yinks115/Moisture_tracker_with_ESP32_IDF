@@ -12,6 +12,19 @@ typedef struct {
 } events_data_t;
 
 extern events_data_t wifi_events;
+extern const int HTTP_BUFF_LEN;
+extern const char* SERVER_URL;
+extern const char* SUBMIT_READING_ROUTE;
+extern const int POST_TIMEOUT;
+extern const int WIFI_CONNECTION_TIMEOUT;
+
+/**
+ * Sends a moisture reading to the backend db
+ * 
+ * @param reading the moisture reading value to be sent
+ * @return returns ESP_OK or ESP_FAIL
+ */
+esp_err_t post_moisture_reading(const int reading);
 
 /**
  * Set up function for creating wifi events loop and group. in addition this function sets
