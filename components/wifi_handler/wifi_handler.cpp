@@ -5,7 +5,6 @@
 #include <esp_netif.h> //for networking
 #include <esp_wifi.h>
 #include <esp_http_client.h>
-#include <esp_tls.h>
 #include <string>
 
 #include "wifi_handler.hpp"
@@ -107,7 +106,7 @@ esp_err_t start_wifi_connection() {
         .method = HTTP_METHOD_POST,
         .timeout_ms = POST_TIMEOUT,
         .event_handler = http_event_handler
-    }
+    };
 
     //event handlers setup
     if (wan_event_handler_setup() != ESP_OK) {
@@ -270,7 +269,7 @@ void ip_event_handler(
         default:
             ESP_LOGI(
                 _WIFI_EVENTS_LOGGER,
-                "Failed to get an IP address. Handler might have been activated by the wrong event type. Event id: %d", stat_cast<int>(event_id)
+                "Failed to get an IP address. Handler might have been activated by the wrong event type. Event id: %d", static_cast<int>(event_id)
             );
             break;
     }
@@ -300,7 +299,7 @@ esp_err_t http_event_handler(esp_http_client_event_t* event) {
         case HTTP_EVENT_ON_FINISH:
             ESP_LOGI(_WIFI_EVENTS_LOGGER, "http_events_handler: HTTP_EVENT_ON_FINISH");
             //clearing the buffer
-            buff_dat_len = 0;
+            buff_data_len = 0;
             if (output_buffer != NULL) {
                 free(output_buffer);
                 output_buffer = NULL;
@@ -333,7 +332,7 @@ esp_err_t http_event_handler(esp_http_client_event_t* event) {
             int rem_space = HTTP_BUFF_LEN - buff_data_len; //space left in our buffer
             int copy_len = _min(event->data_len, rem_space); //returns the smaller value
             if (copy_len > 0) {
-                //output_buff+buff_data_len gets the index of the last valid character in the buff. then we copy the data
+                //output_buff+buff_data_len (ptr arithmetic) gets the index of the last valid character in the buff. then we copy the data
                 //from the http event to the remainin space
                 memcpy(output_buffer+buff_data_len, event->data, copy_len);
                 buff_data_len += copy_len;
