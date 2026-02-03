@@ -218,6 +218,8 @@ esp_err_t stop_wifi_connection() {
 esp_err_t post_moisture_reading(const int reading) {
 
     // convert reading to json
+    const std::string payload = _to_json(reading);
+    bool err = false;
 
     /*
     Procedure:
@@ -227,6 +229,41 @@ esp_err_t post_moisture_reading(const int reading) {
     4. perform the Post request
     5. free the http client
     */
+
+    esp_http_client_handle_t client = esp_http_client_init(&http_client_config);
+    if (client == NULL) {
+        ESP_LOGE(_WIFI_EVENTS_LOGGER, "ERROR! Unable to create HTTP Client");
+        err = true;
+    }
+
+    // set http header
+    if (esp_http_client_set_header(client, "content-type", "application/json") == ESP_OK) {
+        ESP_LOGE(_WIFI_EVENTS_LOGGER, "ERROR! Unable to set HTTP header");
+        err = true;
+    }
+
+    // set method to POST
+    if (esp_http_client_set_method(client, HTTP_METHOD_POST) != ESP_OK) {
+        ESP_LOGE(_WIFI_EVENTS_LOGGER, "ERROR! Unable to set HTTP_METHOD to POST");
+        err = true;
+    }
+
+    //set post field
+    if (esp_http_client_set_post_field(client, payload.c_str(), payload.length()) != ESP_OK) {
+        ESP_LOGE(_WIFI_EVENTS_LOGGER, "ERROR! Unable set HTTP Post field");
+        err = true;
+    }
+
+    //performs the request and frees resources
+    esp_err_t res = esp_http_client_perform(client);
+    if (res == ESP_OK) {
+        ESP_LOGI(_WIFI_EVENTS_LOGGER, "Successfully POST moisture reading!");
+    } else {
+        ESP_LOGE(_WIFI_EVENTS_LOGGER, "ERROR! Unable to POST moisture reading. Error Code=%s", esp_err_to_name(res));
+
+    }
+
+    return err ? ESP_FAIL: ESP_OK;
 }
 
 //**************implementation of event handlers
@@ -374,6 +411,20 @@ esp_err_t http_event_handler(esp_http_client_event_t* event) {
     }
 
     return ESP_OK;
+}
+
+const std::string _to_json(const int value) {
+    const std::string plant_name = std::string(reinterpret_cast<const char*>(leaf_info.plant_name));
+
+    /*
+    {
+        "plant name": "<plant's name>",
+        "moisture val" "<moisture val"
+    }
+    */
+    const std::string json_str = "{\"plant name\":\"" + plant_name + "\", \"moisture\" :\"" + std::to_string(value) + "}";
+
+    return json_str;
 }
 
 int _min(int n1, int n2) {

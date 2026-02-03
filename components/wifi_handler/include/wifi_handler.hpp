@@ -92,4 +92,12 @@ esp_err_t http_event_handler(esp_http_client_event_t* event);
  */
 int _min(int n1, int n2);
 
+/**
+ * Converts the moisture value to a json format
+ * 
+ * @param value the moisture value
+ * @return returns a json string
+ */
+const std::string _to_json(const int value);
+
 #endif
