@@ -8,6 +8,15 @@ static const char* _logger = "Moisture Tracker *** "; //scope is restricted to t
 
 void moisture_tracker(void* pvParameters) {
 
+    /*
+    Procedure:
+    1. connect to wifi
+    2. get a moisture reading
+    3. send the moisture reading to the backend
+    4. disconnect form wifi
+    5. go into sleep to optimize power
+    */
+
     ESP_LOGI(_logger, "Starting moisture Tracker task");
 
     esp_sleep_enable_timer_wakeup(SLEEP_DURATION);
