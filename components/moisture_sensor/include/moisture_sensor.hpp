@@ -11,13 +11,14 @@
  * Espressif Docs on using one shot mode and calibrating analog readings
  * https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/adc_oneshot.html
  * https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/adc_calibration.html
+ * 
+ * data sheet
+ * https://documentation.espressif.com/esp32_technical_reference_manual_en.pdf
  */
 
-extern std::vector<double> _readings_buffer;
-extern adc_oneshot_unit_init_cfg_t adc_config; // adc object used to select ADC unit
-extern adc_oneshot_unit_handle_t adc1_handle; //instance used for adc operations
-extern adc_oneshot_chan_cfg_t chan_config; //used to set attenuation and bitwidth
-
+extern adc_oneshot_unit_init_cfg_t ADC_CONFIG; // adc object used to select ADC unit
+extern adc_oneshot_chan_cfg_t CHAN_CONFIG; //used to set attenuation and bitwidth
+extern adc_cali_line_fitting_config_t CALI_CONFIG; // used for calibration
 
 
 /**
@@ -28,6 +29,7 @@ void moisture_sensor_int(int n);
 
 /**
  * performs n reads from the moisture sensor and stores them in a buffer. clears buffer before returning
+ * multisampling is done to mitigate noise
  * @return returns the average of the buffer values
  */
 double get_moisture_val();
