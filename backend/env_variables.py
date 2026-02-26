@@ -1,5 +1,5 @@
 # database path
-DB_PATH = 'database/plant_data.db'
+DB_PATH = 'database/plant_data.db' # dir of database
 
 # set host to local host
 HOST_NAME = '127.0.0.1'
